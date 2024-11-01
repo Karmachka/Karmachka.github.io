@@ -1,0 +1,46 @@
+* {
+	margin: 0;
+	padding: 0;
+}
+html,
+body {
+	height: 100%;
+	width: 100%;
+}
+body {
+	background-image: url("fon.png");
+	background-position: center;
+	background-size: cover;
+	background-repeat: no-repeat;
+}
+.table {
+	margin-top: 35%;
+	display: flex;
+	justify-content: center;
+	width: 100%;
+}
+.btn-box {
+	margin-top: 77%;
+	width: 100%;
+	justify-content: center;
+	display: flex;
+}
+.table-img {
+	height: 206px;
+	width: 326px;
+}
+.btn-img {
+	z-index: 2;
+	width: 328px;
+	height: 49px;
+}
+.conteiner {
+	margin-top: -5px;
+	z-index: 1;
+	background-color: black;
+	position: absolute;
+	width: 348px;
+	filter: blur(20px);
+	height: 69px;
+	border-radius: 123px;
+}
