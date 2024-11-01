@@ -64,7 +64,7 @@ body {
 h1 {
 	position: relative;
 	z-index: 7;
-	margin-top: 20%;
+	margin-top: 10vh;
 	color: white;
 	font-weight: 700;
 	font-size: 36px;
@@ -73,7 +73,7 @@ h1 {
 h4 {
 	position: relative;
 	z-index: 7;
-	margin-top: 20%;
+	margin-top: 10vh;
 	color: white;
 	font-weight: 400;
 	font-size: 15px;
@@ -81,7 +81,7 @@ h4 {
 }
 .img-block {
 	position: relative;
-	margin-top: 25%;
+	margin-top: 12.5vh;
 	z-index: 7;
 	display: flex;
 	justify-content: center;
@@ -94,7 +94,7 @@ img {
 	display: flex;
 	justify-content: center;
 	align-items: center;
-	margin-top: 60%;
+	margin-top: 30vh;
 	background-color: white;
 	height: 40px;
 	width: 80%;
