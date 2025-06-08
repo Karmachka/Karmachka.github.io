@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Crypto Calculator</title>
+		<style>
+			body {
+				margin: 0;
+				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+				background-color: #0f0f12;
+				color: #e5e5e5;
+				display: flex;
+				flex-direction: column;
+				align-items: center;
+				justify-content: center;
+				height: 100vh;
+			}
+
+			.container {
+				background-color: #1a1a1f;
+				padding: 30px;
+				border-radius: 16px;
+				box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+				width: 90%;
+				max-width: 400px;
+			}
+
+			h2 {
+				text-align: center;
+				margin-bottom: 20px;
+				color: #00ffff;
+				font-weight: 500;
+			}
+
+			input {
+				width: 100%;
+				padding: 12px;
+				margin: 8px 0;
+				border-radius: 8px;
+				border: none;
+				background-color: #2a2a33;
+				color: #fff;
+				font-size: 16px;
+			}
+
+			button {
+				width: 100%;
+				padding: 12px;
+				background: linear-gradient(90deg, #00ffff, #0066ff);
+				border: none;
+				border-radius: 8px;
+				font-size: 16px;
+				color: #000;
+				font-weight: bold;
+				cursor: pointer;
+				transition: 0.2s ease-in-out;
+			}
+
+			button:hover {
+				opacity: 0.85;
+			}
+
+			.output {
+				margin-top: 20px;
+				font-size: 18px;
+				text-align: center;
+				color: #00ffaa;
+			}
+
+			.footer {
+				margin-top: 40px;
+				font-size: 12px;
+				color: #555;
+				text-align: center;
+			}
+		</style>
+		<script>
+			async function fetchPrice() {
+				const token = document
+					.getElementById("token")
+					.value.toLowerCase()
+					.trim();
+				const amount = parseFloat(document.getElementById("amount").value || 0);
+				const output = document.getElementById("output");
+
+				if (!token || isNaN(amount)) {
+					output.textContent = "Введите монету и количество.";
+					return;
+				}
+
+				try {
+					const res = await fetch(
+						`https://api.coingecko.com/api/v3/simple/price?ids=${token}&vs_currencies=usd`
+					);
+					const data = await res.json();
+					if (!data[token] || !data[token].usd) {
+						output.textContent = "❌ Не найдена монета.";
+						return;
+					}
+
+					const price = data[token].usd;
+					const total = price * amount;
+					output.textContent = `💵 $${total.toFixed(2)} (курс: $${price})`;
+				} catch (err) {
+					console.error(err);
+					output.textContent = "Ошибка загрузки курса.";
+				}
+			}
+		</script>
+	</head>
+	<body>
+		<div class="container">
+			<h2>Crypto Calculator</h2>
+			<input id="token" placeholder="Например: bitcoin, ethereum" />
+			<input id="amount" type="number" placeholder="Количество монет" />
+			<button onclick="fetchPrice()">🔍 Рассчитать</button>
+			<div class="output" id="output">—</div>
+		</div>
+	</body>
+</html>
