@@ -21,7 +21,6 @@
 				align-items: center;
 			}
 
-			/* НЕОНОВЫЙ ФОН */
 			.bg-lines {
 				position: fixed;
 				width: 100%;
@@ -39,24 +38,20 @@
 			}
 
 			.line:nth-child(1) {
-				left: 10%;
+				left: 15%;
 				animation-delay: 0s;
 			}
 			.line:nth-child(2) {
-				left: 30%;
+				left: 35%;
 				animation-delay: 1s;
 			}
 			.line:nth-child(3) {
-				left: 50%;
+				left: 55%;
 				animation-delay: 2s;
 			}
 			.line:nth-child(4) {
-				left: 70%;
+				left: 75%;
 				animation-delay: 3s;
-			}
-			.line:nth-child(5) {
-				left: 90%;
-				animation-delay: 4s;
 			}
 
 			@keyframes flicker {
@@ -65,7 +60,7 @@
 					opacity: 0.1;
 				}
 				50% {
-					opacity: 0.6;
+					opacity: 0.5;
 				}
 			}
 
@@ -101,15 +96,21 @@
 				cursor: pointer;
 				display: flex;
 				align-items: center;
-				justify-content: space-between;
+				justify-content: flex-start;
 				font-size: 16px;
 				border: 1px solid #00ffff22;
+				gap: 10px;
+				box-shadow: 0 0 10px #00ffff22 inset;
+				transition: all 0.25s ease;
+			}
+
+			.dropdown-selected:hover {
+				box-shadow: 0 0 15px #00ffff44;
 			}
 
 			.dropdown-selected img {
 				width: 20px;
 				height: 20px;
-				margin-right: 10px;
 			}
 
 			.dropdown-list {
@@ -131,12 +132,13 @@
 				display: flex;
 				align-items: center;
 				font-size: 15px;
+				gap: 10px;
+				transition: background 0.2s ease;
 			}
 
 			.dropdown-item img {
 				width: 20px;
 				height: 20px;
-				margin-right: 10px;
 			}
 
 			.dropdown-item:hover {
@@ -184,8 +186,19 @@
 				margin-top: 20px;
 				font-size: 18px;
 				text-align: center;
-				color: #00ffaa;
 				min-height: 24px;
+			}
+
+			.output-box {
+				background-color: #111820;
+				border: 1px solid #00ffff55;
+				border-radius: 10px;
+				padding: 16px;
+				margin-top: 16px;
+				text-align: center;
+				color: #00ffaa;
+				box-shadow: 0 0 15px #00ffff22;
+				font-size: 17px;
 			}
 
 			@media (max-width: 480px) {
@@ -196,9 +209,7 @@
 		</style>
 	</head>
 	<body>
-		<!-- НЕОНОВЫЕ ЛИНИИ -->
 		<div class="bg-lines">
-			<div class="line"></div>
 			<div class="line"></div>
 			<div class="line"></div>
 			<div class="line"></div>
@@ -216,9 +227,7 @@
 					/>
 					<span id="selected-name">Bitcoin</span>
 				</div>
-				<div class="dropdown-list" id="dropdown-list">
-					<!-- Токены -->
-				</div>
+				<div class="dropdown-list" id="dropdown-list"></div>
 			</div>
 
 			<input id="amount" type="number" placeholder="Количество монет" />
@@ -244,24 +253,9 @@
 					icon: "https://assets.coingecko.com/coins/images/4128/thumb/solana.png",
 				},
 				{
-					id: "dogecoin",
-					name: "Dogecoin",
-					icon: "https://assets.coingecko.com/coins/images/5/thumb/dogecoin.png",
-				},
-				{
-					id: "shiba-inu",
-					name: "Shiba Inu",
-					icon: "https://assets.coingecko.com/coins/images/11939/thumb/shiba.png",
-				},
-				{
-					id: "aptos",
-					name: "Aptos",
-					icon: "https://assets.coingecko.com/coins/images/26455/thumb/aptos_round.png",
-				},
-				{
-					id: "cardano",
-					name: "Cardano",
-					icon: "https://assets.coingecko.com/coins/images/975/thumb/cardano.png",
+					id: "tether",
+					name: "USDT",
+					icon: "https://assets.coingecko.com/coins/images/325/thumb/Tether-logo.png",
 				},
 			];
 
@@ -295,7 +289,7 @@
 				const output = document.getElementById("output");
 
 				if (isNaN(amount) || amount === 0) {
-					output.textContent = "";
+					output.innerHTML = "";
 					return;
 				}
 
@@ -305,16 +299,28 @@
 					);
 					const data = await res.json();
 					if (!data[selectedToken.id] || !data[selectedToken.id].usd) {
-						output.textContent = "❌ Не найдена монета.";
+						output.innerHTML = `<div class="output-box">❌ Не найдена монета</div>`;
 						return;
 					}
 
 					const price = data[selectedToken.id].usd;
 					const total = price * amount;
-					output.textContent = `💵 $${total.toFixed(2)} (курс: $${price})`;
+					output.innerHTML = `
+        <div class="output-box" style="display: flex; flex-direction: column; align-items: center;">
+          <div style="display:flex; align-items:center; gap:10px; margin-bottom: 8px;">
+            <img src="${selectedToken.icon}" style="width:24px; height:24px;">
+            <strong style="font-size:18px;">${amount} ${
+						selectedToken.name
+					}</strong>
+          </div>
+          <div style="font-size: 22px;">💵 <strong>$${total.toFixed(
+						2
+					)}</strong></div>
+          <div style="font-size: 14px; color:#aaa;">Курс: $${price}</div>
+        </div>`;
 				} catch (err) {
 					console.error(err);
-					output.textContent = "Ошибка загрузки курса.";
+					output.innerHTML = `<div class="output-box">Ошибка загрузки курса</div>`;
 				}
 			}
 
