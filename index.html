@@ -2,45 +2,164 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
-		<title>Crypto Calculator</title>
+		<title>Dianstroy Calculator</title>
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<style>
+			* {
+				box-sizing: border-box;
+			}
+
 			body {
 				margin: 0;
 				font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-				background-color: #0f0f12;
+				background-color: #0e0e13;
 				color: #e5e5e5;
-				display: flex;
-				flex-direction: column;
-				align-items: center;
-				justify-content: center;
 				height: 100vh;
+				overflow: hidden;
+				display: flex;
+				justify-content: center;
+				align-items: center;
+			}
+
+			/* НЕОНОВЫЙ ФОН */
+			.bg-lines {
+				position: fixed;
+				width: 100%;
+				height: 100%;
+				overflow: hidden;
+				z-index: 0;
+			}
+
+			.line {
+				position: absolute;
+				width: 2px;
+				height: 100%;
+				background: linear-gradient(180deg, #00ffff55, transparent);
+				animation: flicker 2s infinite ease-in-out;
+			}
+
+			.line:nth-child(1) {
+				left: 10%;
+				animation-delay: 0s;
+			}
+			.line:nth-child(2) {
+				left: 30%;
+				animation-delay: 1s;
+			}
+			.line:nth-child(3) {
+				left: 50%;
+				animation-delay: 2s;
+			}
+			.line:nth-child(4) {
+				left: 70%;
+				animation-delay: 3s;
+			}
+			.line:nth-child(5) {
+				left: 90%;
+				animation-delay: 4s;
+			}
+
+			@keyframes flicker {
+				0%,
+				100% {
+					opacity: 0.1;
+				}
+				50% {
+					opacity: 0.6;
+				}
 			}
 
 			.container {
-				background-color: #1a1a1f;
-				padding: 30px;
-				border-radius: 16px;
-				box-shadow: 0 0 20px rgba(0, 255, 255, 0.1);
+				background: rgba(26, 26, 31, 0.92);
+				padding: 30px 20px;
+				border-radius: 20px;
+				box-shadow: 0 0 30px rgba(0, 255, 255, 0.08);
 				width: 90%;
-				max-width: 400px;
+				max-width: 420px;
+				backdrop-filter: blur(12px);
+				z-index: 1;
 			}
 
 			h2 {
 				text-align: center;
-				margin-bottom: 20px;
+				margin-bottom: 24px;
 				color: #00ffff;
 				font-weight: 500;
+				font-size: 24px;
+				text-shadow: 0 0 8px #00ffff50;
 			}
 
-			input {
+			.dropdown {
+				position: relative;
+				margin-bottom: 12px;
+			}
+
+			.dropdown-selected {
+				background-color: #2a2a33;
+				padding: 10px;
+				border-radius: 8px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				justify-content: space-between;
+				font-size: 16px;
+				border: 1px solid #00ffff22;
+			}
+
+			.dropdown-selected img {
+				width: 20px;
+				height: 20px;
+				margin-right: 10px;
+			}
+
+			.dropdown-list {
+				position: absolute;
+				width: 100%;
+				background-color: #2a2a33;
+				border-radius: 8px;
+				box-shadow: 0 0 10px rgba(0, 255, 255, 0.1);
+				max-height: 200px;
+				overflow-y: auto;
+				z-index: 99;
+				display: none;
+				margin-top: 4px;
+			}
+
+			.dropdown-item {
+				padding: 10px;
+				cursor: pointer;
+				display: flex;
+				align-items: center;
+				font-size: 15px;
+			}
+
+			.dropdown-item img {
+				width: 20px;
+				height: 20px;
+				margin-right: 10px;
+			}
+
+			.dropdown-item:hover {
+				background-color: #3a3a44;
+			}
+
+			input[type="number"] {
 				width: 100%;
 				padding: 12px;
-				margin: 8px 0;
 				border-radius: 8px;
 				border: none;
 				background-color: #2a2a33;
 				color: #fff;
 				font-size: 16px;
+				appearance: textfield;
+				margin-bottom: 12px;
+				border: 1px solid #00ffff22;
+			}
+
+			input::-webkit-outer-spin-button,
+			input::-webkit-inner-spin-button {
+				-webkit-appearance: none;
+				margin: 0;
 			}
 
 			button {
@@ -54,10 +173,11 @@
 				font-weight: bold;
 				cursor: pointer;
 				transition: 0.2s ease-in-out;
+				box-shadow: 0 0 10px #00ffff88;
 			}
 
 			button:hover {
-				opacity: 0.85;
+				opacity: 0.9;
 			}
 
 			.output {
@@ -65,40 +185,131 @@
 				font-size: 18px;
 				text-align: center;
 				color: #00ffaa;
+				min-height: 24px;
 			}
 
-			.footer {
-				margin-top: 40px;
-				font-size: 12px;
-				color: #555;
-				text-align: center;
+			@media (max-width: 480px) {
+				h2 {
+					font-size: 20px;
+				}
 			}
 		</style>
+	</head>
+	<body>
+		<!-- НЕОНОВЫЕ ЛИНИИ -->
+		<div class="bg-lines">
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+			<div class="line"></div>
+		</div>
+
+		<div class="container">
+			<h2>Dianstroy Calculator</h2>
+
+			<div class="dropdown" id="dropdown">
+				<div class="dropdown-selected" onclick="toggleDropdown()">
+					<img
+						id="selected-icon"
+						src="https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png"
+					/>
+					<span id="selected-name">Bitcoin</span>
+				</div>
+				<div class="dropdown-list" id="dropdown-list">
+					<!-- Токены -->
+				</div>
+			</div>
+
+			<input id="amount" type="number" placeholder="Количество монет" />
+			<button onclick="fetchPrice()">🔍 Рассчитать</button>
+			<div class="output" id="output"></div>
+		</div>
+
 		<script>
+			const tokens = [
+				{
+					id: "bitcoin",
+					name: "Bitcoin",
+					icon: "https://assets.coingecko.com/coins/images/1/thumb/bitcoin.png",
+				},
+				{
+					id: "ethereum",
+					name: "Ethereum",
+					icon: "https://assets.coingecko.com/coins/images/279/thumb/ethereum.png",
+				},
+				{
+					id: "solana",
+					name: "Solana",
+					icon: "https://assets.coingecko.com/coins/images/4128/thumb/solana.png",
+				},
+				{
+					id: "dogecoin",
+					name: "Dogecoin",
+					icon: "https://assets.coingecko.com/coins/images/5/thumb/dogecoin.png",
+				},
+				{
+					id: "shiba-inu",
+					name: "Shiba Inu",
+					icon: "https://assets.coingecko.com/coins/images/11939/thumb/shiba.png",
+				},
+				{
+					id: "aptos",
+					name: "Aptos",
+					icon: "https://assets.coingecko.com/coins/images/26455/thumb/aptos_round.png",
+				},
+				{
+					id: "cardano",
+					name: "Cardano",
+					icon: "https://assets.coingecko.com/coins/images/975/thumb/cardano.png",
+				},
+			];
+
+			let selectedToken = tokens[0];
+
+			function toggleDropdown() {
+				const list = document.getElementById("dropdown-list");
+				list.style.display = list.style.display === "block" ? "none" : "block";
+			}
+
+			function selectToken(token) {
+				selectedToken = token;
+				document.getElementById("selected-icon").src = token.icon;
+				document.getElementById("selected-name").textContent = token.name;
+				toggleDropdown();
+			}
+
+			function renderDropdownItems() {
+				const container = document.getElementById("dropdown-list");
+				tokens.forEach((token) => {
+					const item = document.createElement("div");
+					item.className = "dropdown-item";
+					item.onclick = () => selectToken(token);
+					item.innerHTML = `<img src="${token.icon}"><span>${token.name}</span>`;
+					container.appendChild(item);
+				});
+			}
+
 			async function fetchPrice() {
-				const token = document
-					.getElementById("token")
-					.value.toLowerCase()
-					.trim();
 				const amount = parseFloat(document.getElementById("amount").value || 0);
 				const output = document.getElementById("output");
 
-				if (!token || isNaN(amount)) {
-					output.textContent = "Введите монету и количество.";
+				if (isNaN(amount) || amount === 0) {
+					output.textContent = "";
 					return;
 				}
 
 				try {
 					const res = await fetch(
-						`https://api.coingecko.com/api/v3/simple/price?ids=${token}&vs_currencies=usd`
+						`https://api.coingecko.com/api/v3/simple/price?ids=${selectedToken.id}&vs_currencies=usd`
 					);
 					const data = await res.json();
-					if (!data[token] || !data[token].usd) {
+					if (!data[selectedToken.id] || !data[selectedToken.id].usd) {
 						output.textContent = "❌ Не найдена монета.";
 						return;
 					}
 
-					const price = data[token].usd;
+					const price = data[selectedToken.id].usd;
 					const total = price * amount;
 					output.textContent = `💵 $${total.toFixed(2)} (курс: $${price})`;
 				} catch (err) {
@@ -106,15 +317,8 @@
 					output.textContent = "Ошибка загрузки курса.";
 				}
 			}
+
+			renderDropdownItems();
 		</script>
-	</head>
-	<body>
-		<div class="container">
-			<h2>Crypto Calculator</h2>
-			<input id="token" placeholder="Например: bitcoin, ethereum" />
-			<input id="amount" type="number" placeholder="Количество монет" />
-			<button onclick="fetchPrice()">🔍 Рассчитать</button>
-			<div class="output" id="output">—</div>
-		</div>
 	</body>
 </html>
